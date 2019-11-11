@@ -119,7 +119,8 @@ public class BallMgr : Singleton<BallMgr>
 
     public void OnEndOneTurn()
     {
-        SpawnRandomBalls(Ball.State.GROWSMALL);
+        GrowAllSmallBalls();    // grow all small balls
+        SpawnRandomBalls(Ball.State.GROWSMALL);     // spawn random balls
     }
 
     // ========================================================== PRIVATE FUNC ==========================================================
@@ -188,10 +189,8 @@ public class BallMgr : Singleton<BallMgr>
         // update list of small balls
         if (_state == Ball.State.GROWSMALL)
             UpdateListSmallBalls(true, _id);
-        else
-            UpdateListSmallBalls(false, _id);
 
-        // update list empty tiles
+        // update list empty tiles (remove this id)
         UpdateListEmptyTiles(false, _id);
 
         // DEBUG
@@ -232,5 +231,18 @@ public class BallMgr : Singleton<BallMgr>
             if (findId != -1)
                 lSmallBalls.RemoveAt(findId);
         }
+    }
+
+    // ==========
+    private void GrowAllSmallBalls()
+    {
+        for (int i = 0; i < lSmallBalls.Count; i++)
+        {
+            int id = lSmallBalls[i];
+            if (id < lBalls.Count)
+                lBalls[id].SetActiveState(Ball.State.GROWBIG, true);
+        }
+        // clear all list
+        lSmallBalls.Clear();
     }
 }
