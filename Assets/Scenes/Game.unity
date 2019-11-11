@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefTile: {fileID: 1490553932928276, guid: deaf8f89984abee4da05e427efe921bd, type: 2}
-  boardDimension: 9
+  boardDimension: 4
   boardScale: 0.75
   tileOffset: 0.04
   rectBoardSize:

@@ -147,32 +147,32 @@ public class BallMgr : Singleton<BallMgr>
     // === spawn ball ===
     private void SpawnRandomBalls(Ball.State _state)
     {
-        List<GameObject> lTiles = BoardMgr.instance.GetListTiles();
-
         // gen balls
-        List<int> prevIds = new List<int>();
+        List<int> spawnIds = new List<int>();
         int turn = Mathf.Min(ballPerTurn, lEmptyTiles.Count);
+        // Random Position (not match prev pos)
         for (int i = 0; i < turn; i++)
         {
-            int rdSpawnId = -1;
-            // Random Position (not match prev pos)
+            int rdId = -1;
             do
             {
-                rdSpawnId = turn < ballPerTurn ? i : Random.Range(0, lEmptyTiles.Count);
-            } while (prevIds.Contains(rdSpawnId));
-            prevIds.Add(rdSpawnId);
+                rdId = (turn == ballPerTurn) ? Random.Range(0, lEmptyTiles.Count) : i;
+            } while (spawnIds.Contains(rdId) || rdId >= lEmptyTiles.Count);
+            spawnIds.Add(lEmptyTiles[rdId]);
+        }
 
+        for (int i = 0; i < spawnIds.Count; i++)
+        {
             // Random Type
             Ball.Type rdType = (Ball.Type)Random.Range((int)Ball.Type.BLUE, (int)Ball.Type.GHOST + 1);
-
             // spawn
-            SpawnBalls(rdSpawnId, rdType, _state);
+            SpawnBalls(spawnIds[i], rdType, _state);
         }
 
         // GAME OVER
         if (turn < ballPerTurn)
         {
-
+            Debug.Log("GAME OVER");
         }
     }
 
@@ -194,7 +194,7 @@ public class BallMgr : Singleton<BallMgr>
         UpdateListEmptyTiles(false, _id);
 
         // DEBUG
-        if (DebugUtils.IsDebugEnable())
+        //if (DebugUtils.IsDebugEnable())
             Debug.Log("SPAWN BALL = " + _id);
     }
 
