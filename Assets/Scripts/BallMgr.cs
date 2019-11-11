@@ -74,7 +74,8 @@ public class BallMgr : Singleton<BallMgr>
             lEmptyTiles.Add(i); // default all slots available to spawn
         }
 
-        SpawnBalls(Ball.State.GROWBIG);
+        // default spawn big size
+        SpawnRandomBalls(Ball.State.GROWBIG);
     }
 
     public void OnTouchBall(int _tileId)
@@ -116,6 +117,11 @@ public class BallMgr : Singleton<BallMgr>
         }
     }
 
+    public void OnEndOneTurn()
+    {
+        SpawnRandomBalls(Ball.State.GROWSMALL);
+    }
+
     // ========================================================== PRIVATE FUNC ==========================================================
     private void OnMovingBall(Ball _moveBall, int _desTileId)
     {
@@ -133,11 +139,68 @@ public class BallMgr : Singleton<BallMgr>
         desBall.SetPosition(_moveBall.GetPosition());
 
         // update empty slot
-        UpdateEmptyTiles(true, desBall.GetTileId());    // add new empty slot
-        UpdateEmptyTiles(false, _moveBall.GetTileId()); // remove empty slot
+        UpdateListEmptyTiles(true, desBall.GetTileId());    // add new empty slot
+        UpdateListEmptyTiles(false, _moveBall.GetTileId()); // remove empty slot
     }
 
-    private void UpdateEmptyTiles(bool _isAddAction, int _tileId)
+    // === spawn ball ===
+    private void SpawnRandomBalls(Ball.State _state)
+    {
+        List<GameObject> lTiles = BoardMgr.instance.GetListTiles();
+
+        // gen balls
+        List<int> prevIds = new List<int>();
+        int turn = Mathf.Min(ballPerTurn, lEmptyTiles.Count);
+        for (int i = 0; i < turn; i++)
+        {
+            int rdSpawnId = -1;
+            // Random Position (not match prev pos)
+            do
+            {
+                rdSpawnId = turn < ballPerTurn ? i : Random.Range(0, lEmptyTiles.Count);
+            } while (prevIds.Contains(rdSpawnId));
+            prevIds.Add(rdSpawnId);
+
+            // Random Type
+            Ball.Type rdType = (Ball.Type)Random.Range((int)Ball.Type.BLUE, (int)Ball.Type.GHOST + 1);
+
+            // spawn
+            SpawnBalls(rdSpawnId, rdType, _state);
+        }
+
+        // GAME OVER
+        if (turn < ballPerTurn)
+        {
+
+        }
+    }
+
+    private void SpawnBalls(int _id, Ball.Type _type, Ball.State _state)
+    {
+        if (_id >= lBalls.Count)
+            return;
+
+        // active ball
+        Ball ball = lBalls[_id];
+        ball.SetType(_type);
+        ball.SetActiveState(_state, true);
+
+        // update list of small balls
+        if (_state == Ball.State.GROWSMALL)
+            UpdateListSmallBalls(true, _id);
+        else
+            UpdateListSmallBalls(false, _id);
+
+        // update list empty tiles
+        UpdateListEmptyTiles(false, _id);
+
+        // DEBUG
+        if (DebugUtils.IsDebugEnable())
+            Debug.Log("SPAWN BALL = " + _id);
+    }
+
+    // === update list info ===
+    private void UpdateListEmptyTiles(bool _isAddAction, int _tileId)
     {
         if (_isAddAction)
         {
@@ -156,46 +219,18 @@ public class BallMgr : Singleton<BallMgr>
         }
     }
 
-    private void SpawnBalls(Ball.State _state)
+    private void UpdateListSmallBalls(bool _isAddAction, int _tileId)
     {
-        List<GameObject> lTiles = BoardMgr.instance.GetListTiles();
-
-        // gen balls
-        List<int> spawnPositions = new List<int>();
-        int turn = Mathf.Min(ballPerTurn, lEmptyTiles.Count);
-        for (int i = 0; i < turn; i++)
+        if (_isAddAction)
         {
-            int rdSlot = -1;
-            // random until next pos is available (not match prev pos)
-            do
-            {
-                rdSlot = turn < ballPerTurn ? i : Random.Range(0, lEmptyTiles.Count);
-            } while (spawnPositions.Contains(rdSlot));
-            spawnPositions.Add(rdSlot);
-
-            if (rdSlot <= lBalls.Count)
-            {
-                Ball ball = lBalls[rdSlot];
-                ball.SetActiveState(_state, true);
-
-                // store slot of small ball
-                if (_state == Ball.State.GROWSMALL)
-                    lSmallBalls.Add(rdSlot);
-            }
+            if (!lSmallBalls.Contains(_tileId))
+                lSmallBalls.Add(_tileId);
         }
-
-        // remove this slots for next spawn
-        for (int i = 0; i < spawnPositions.Count; i++)
+        else
         {
-            int tmpId = lEmptyTiles.FindIndex(x => x == spawnPositions[i]);
-            if (tmpId != -1)
-                lEmptyTiles.RemoveAt(tmpId);
-        }
-
-        // GAME OVER
-        if (turn < ballPerTurn)
-        {
-
+            int findId = lSmallBalls.FindIndex(x => x == _tileId);
+            if (findId != -1)
+                lSmallBalls.RemoveAt(findId);
         }
     }
 }

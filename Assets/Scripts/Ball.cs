@@ -104,6 +104,23 @@ public class Ball : MonoBehaviour
         UpdateState();
     }
 
+    public void Init(int _tileId, Type _type, State _state = State.INVISIBLE)
+    {
+        tileId = _tileId;
+        SetActiveState(_state, true);
+        SetType(_type);
+    }
+
+    private void UpdateState()
+    {
+        switch (state)
+        {
+            case State.MOVING:
+                UpdateMovingBall();
+                break;
+        }
+    }
+
     private void UpdateMovingBall()
     {
         // update velocity
@@ -137,7 +154,7 @@ public class Ball : MonoBehaviour
 
             // update step
             GameObject nextTile = lTiles[nextTileId];
-            if (IsReachPosition(nextTile.transform))
+            if (IsReachNode(nextTile))
                 curStep++;
         }
 
@@ -155,22 +172,18 @@ public class Ball : MonoBehaviour
         {
             // snap position
             GameObject curTile = lTiles[movingPath.GetNode(curStep)];
-            if (IsReachPosition(curTile.transform))
+            if (IsReachNode(curTile))
                 SetPositionXY(new Vector2(curTile.transform.position.x, curTile.transform.position.y));
 
             // disable MOVING state
             SetActiveState(State.MOVING, false);
+
+            // callback End Turn event
+            BallMgr.Instance.OnEndOneTurn();
         }
     }
 
     // ========================================================== PUBLIC FUNC ==========================================================
-    public void Init(int _tileId, Type _type, State _state = State.INVISIBLE)
-    {
-        tileId = _tileId;
-        SetActiveState(_state, true);
-        SetType(_type);
-    }
-
     public bool FindPath(List<int> _lAvailSlots, int _desTileId)
     {
         movingPath = Utils.FindShortestPath(_lAvailSlots, BoardMgr.Instance.boardDimension, tileId, _desTileId);
@@ -186,16 +199,6 @@ public class Ball : MonoBehaviour
     }
 
     // ========================================================== PRIVATE FUNC ==========================================================
-    private void UpdateState()
-    {
-        switch (state)
-        {
-            case State.MOVING:
-                UpdateMovingBall();
-                break;
-        }
-    }
-
     private void ChangeSprite()
     {
         if (!srBall)
@@ -216,13 +219,14 @@ public class Ball : MonoBehaviour
     {
         animator.Play(_state.ToString().ToLower(), -1, 0);
     }
-    private bool IsReachPosition(Transform _transform)
+
+    private bool IsReachNode(GameObject _node)
     {
         float ballSize = BallMgr.Instance.GetBallSize();
-        if ((mvmVelocity.x > 0 && Mathf.Abs(transform.position.x - _transform.position.x) <= ballSize / 4.0f) ||
-             (mvmVelocity.x < 0 && Mathf.Abs(transform.position.x - _transform.position.x) <= ballSize / 4.0f) ||
-             (mvmVelocity.y > 0 && Mathf.Abs(transform.position.y - _transform.position.y) <= ballSize / 4.0f) ||
-             (mvmVelocity.y < 0 && Mathf.Abs(transform.position.y - _transform.position.y) <= ballSize / 4.0f))
+        if ((mvmVelocity.x > 0 && Mathf.Abs(transform.position.x - _node.transform.position.x) <= ballSize / 4.0f) ||
+             (mvmVelocity.x < 0 && Mathf.Abs(transform.position.x - _node.transform.position.x) <= ballSize / 4.0f) ||
+             (mvmVelocity.y > 0 && Mathf.Abs(transform.position.y - _node.transform.position.y) <= ballSize / 4.0f) ||
+             (mvmVelocity.y < 0 && Mathf.Abs(transform.position.y - _node.transform.position.y) <= ballSize / 4.0f))
             return true;
         return false;
     }
