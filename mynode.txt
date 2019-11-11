@@ -1,0 +1,7 @@
+* click to another idle ball
+* moving ghost type
+- add ui (point - gameover - startgame)
+- save game
+- fx moving ball
+- fx explode (match ball)
+- scriptcreateobj
