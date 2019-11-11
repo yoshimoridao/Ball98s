@@ -137,13 +137,8 @@ public class Ball : MonoBehaviour
 
             // update step
             GameObject nextTile = lTiles[nextTileId];
-            if ((mvmVelocity.x > 0 && transform.position.x >= nextTile.transform.position.x) ||
-                (mvmVelocity.x < 0 && transform.position.x <= nextTile.transform.position.x) ||
-                (mvmVelocity.y > 0 && transform.position.y >= nextTile.transform.position.y) ||
-                (mvmVelocity.y < 0 && transform.position.y <= nextTile.transform.position.y))
-            {
+            if (IsReachPosition(nextTile.transform))
                 curStep++;
-            }
         }
 
         // update position
@@ -160,13 +155,8 @@ public class Ball : MonoBehaviour
         {
             // snap position
             GameObject curTile = lTiles[movingPath.GetNode(curStep)];
-            if ((mvmVelocity.x > 0 && transform.position.x >= curTile.transform.position.x) ||
-                (mvmVelocity.x < 0 && transform.position.x <= curTile.transform.position.x) ||
-                (mvmVelocity.y > 0 && transform.position.y >= curTile.transform.position.y) ||
-                (mvmVelocity.y < 0 && transform.position.x <= curTile.transform.position.y))
-            {
+            if (IsReachPosition(curTile.transform))
                 SetPositionXY(new Vector2(curTile.transform.position.x, curTile.transform.position.y));
-            }
 
             // disable MOVING state
             SetActiveState(State.MOVING, false);
@@ -225,6 +215,16 @@ public class Ball : MonoBehaviour
     private void PlayAnimation(State _state)
     {
         animator.Play(_state.ToString().ToLower(), -1, 0);
+    }
+    private bool IsReachPosition(Transform _transform)
+    {
+        float ballSize = BallMgr.Instance.GetBallSize();
+        if ((mvmVelocity.x > 0 && Mathf.Abs(transform.position.x - _transform.position.x) <= ballSize / 4.0f) ||
+             (mvmVelocity.x < 0 && Mathf.Abs(transform.position.x - _transform.position.x) <= ballSize / 4.0f) ||
+             (mvmVelocity.y > 0 && Mathf.Abs(transform.position.y - _transform.position.y) <= ballSize / 4.0f) ||
+             (mvmVelocity.y < 0 && Mathf.Abs(transform.position.y - _transform.position.y) <= ballSize / 4.0f))
+            return true;
+        return false;
     }
 
     // ========================================================== DEBUG FUNC ==========================================================

@@ -24,6 +24,7 @@ public class BallMgr : Singleton<BallMgr>
     public Path shortestPath;
 
     // ========================================================== GET/ SET ==========================================================
+    public float GetBallSize() { return ballSize; }
 
     // ========================================================== UNITY FUNC ==========================================================
     private void Awake()
