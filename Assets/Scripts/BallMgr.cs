@@ -56,7 +56,7 @@ public class BallMgr : Singleton<BallMgr>
             genBall.name = "ball_" + i.ToString();
             // set position
             Vector3 posBall = compBall.GetPosition();
-            compBall.SetPosition(new Vector3(tile.transform.position.x, tile.transform.position.y, posBall.z));
+            compBall.SetPosition(new Vector3(tile.transform.position.x, tile.transform.position.y, ZDepth.GetDepth(ZDepth.Layer.BALL)));
             // set scale
             if (ballSize == 0)
             {

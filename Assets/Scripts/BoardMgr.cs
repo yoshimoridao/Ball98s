@@ -29,7 +29,8 @@ public class BoardMgr : Singleton<BoardMgr>
     }
     void Start ()
     {
-        
+        // set z for bg
+        transform.position = new Vector3(transform.position.x, transform.position.y, ZDepth.GetDepth(ZDepth.Layer.TILEBG));
     }
 	
 	void Update ()
@@ -90,7 +91,7 @@ public class BoardMgr : Singleton<BoardMgr>
             // set position
             int r = (i / boardDimension);
             int c = (i % boardDimension);
-            Vector3 tilePos = new Vector3(rectBoardSize.x + (c + 0.5f) * tileSize, rectBoardSize.y - (r + 0.5f) * tileSize, 0.0f);
+            Vector3 tilePos = new Vector3(rectBoardSize.x + (c + 0.5f) * tileSize, rectBoardSize.y - (r + 0.5f) * tileSize, ZDepth.GetDepth(ZDepth.Layer.TILE));
             genTile.transform.position = tilePos;
             // set parent
             genTile.transform.parent = transform;

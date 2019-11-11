@@ -81,6 +81,10 @@ public class Ball : MonoBehaviour
                 curStep = 0;
                 mvmVelocity = oldMvmVelocity = Vector2.zero;
                 movingPath = _isActive ? movingPath : null;
+                // set z depth
+                Vector3 pos = GetPosition();
+                pos.z = ZDepth.GetDepth(_isActive ? ZDepth.Layer.BALLONTOP : ZDepth.Layer.BALL);
+                SetPosition(pos);
 
                 // play anim idle
                 if (_isActive)
