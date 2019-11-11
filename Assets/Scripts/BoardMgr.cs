@@ -17,10 +17,13 @@ public class BoardMgr : Singleton<BoardMgr>
     private float tileSize;
 
     // ========================================================== GETTER/ SETTER ==========================================================
-    public List<GameObject> GetListTiles()
+    public GameObject GetTile(int _tileId)
     {
-        return lTiles;
+        if (_tileId < lTiles.Count)
+            return lTiles[_tileId];
+        return null;
     }
+    public List<GameObject> GetListTiles() { return lTiles; }
 
     // ========================================================== UNITY FUNC ==========================================================
     private void Awake()

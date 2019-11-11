@@ -8,6 +8,7 @@ public class Ball : MonoBehaviour
     public string ballImgPath = "Image/{0}_ball";
     public enum Type { BLUE, BROWN, GREEN, LIGHT_BLUE, PINK, RED, GHOST };
     public enum State { INVISIBLE, IDLE, GROWSMALL, GROWBIG, BOUNCE, MOVING };
+    public enum Size { SMALL, BIG };
 
     public Transform transBall;
     public SpriteRenderer srBall;
@@ -19,6 +20,7 @@ public class Ball : MonoBehaviour
     private Type type;
     [SerializeField]
     private State state = State.IDLE;
+    private Size size = Size.SMALL;
 
     [SerializeField]
     private Path movingPath = null;
@@ -30,6 +32,8 @@ public class Ball : MonoBehaviour
     private Vector2 oldMvmVelocity = Vector2.zero;
 
     // ========================================================== GETTER/ SETTER ==========================================================
+    public SpriteRenderer GetSpriteRenderer() { return srBall; }
+
     public void SetTileId(int _tileId) { tileId = _tileId; }
     public int GetTileId() { return tileId; }
 
@@ -43,14 +47,14 @@ public class Ball : MonoBehaviour
     }
     public Vector3 GetPosition() { return transform.position; }
 
-    public SpriteRenderer GetSpriteRenderer() { return srBall; }
-
     public void SetType(Type _val)
     {
         type = _val;
         ChangeSprite();
     }
     public Type GetType() { return type; }
+
+    public Size GetSize() { return size; }
 
     public void SetState(State _state) { state = _state; }
     public State GetState() { return state; }
@@ -72,6 +76,8 @@ public class Ball : MonoBehaviour
             case State.GROWSMALL:
             case State.GROWBIG:
             case State.BOUNCE:
+                size = state == State.GROWBIG ? Size.BIG : Size.SMALL;
+
                 if (_isActive)
                     PlayAnimation(state);
                 else
@@ -200,6 +206,17 @@ public class Ball : MonoBehaviour
         // end Debug
 
         return movingPath != null;
+    }
+
+    public void OnOverlayed()
+    {
+        // snap to tile' position
+        GameObject tile = BoardMgr.Instance.GetTile(GetTileId());
+        if (tile)
+            SetPositionXY(tile.transform.position);
+
+        // invisible 
+        SetActiveState(Ball.State.INVISIBLE, true);
     }
 
     // ========================================================== PRIVATE FUNC ==========================================================

@@ -16,6 +16,7 @@ public class BallMgr : Singleton<BallMgr>
     private List<int> lEmptyTiles = new List<int>();        // list contains all of id of empty slots on board
     [SerializeField]
     private List<int> lSmallBalls = new List<int>();        // list contains balls scal full size next turn
+    private int smallBallOverlayed = -1;
     private float ballSize;
 
     private int touchedBallId = -1;
@@ -94,18 +95,15 @@ public class BallMgr : Singleton<BallMgr>
         else if (touchedBallId != -1)
         {
             Ball touchedBall = lBalls[touchedBallId];
-            // touch same ball || another activated ball
-            if (_tileId == touchedBallId || touchBall.GetState() != Ball.State.INVISIBLE)
-            {
-                touchedBall.SetActiveState(Ball.State.IDLE, true);
-            }
-            // touch available slot
-            else if (touchBall.GetState() == Ball.State.INVISIBLE)
+           
+            // touch available slot (invisible ball || small ball)
+            if (touchBall.GetState() == Ball.State.INVISIBLE || 
+                (touchBall.GetState() == Ball.State.IDLE && touchBall.GetSize() == Ball.Size.SMALL))
             {
                 // if ball has moving path (-> swap index of 2 ball in storage)
-                List<int> cloneList = new List<int>(lEmptyTiles);
-                cloneList.AddRange(lSmallBalls);
-                if (touchedBall.FindPath(cloneList, _tileId))
+                List<int> cloneListAvailNodes = new List<int>(lEmptyTiles);
+                cloneListAvailNodes.AddRange(lSmallBalls);
+                if (touchedBall.FindPath(cloneListAvailNodes, _tileId))
                 {
                     OnMovingBall(touchedBall, _tileId);
                 }
@@ -115,12 +113,26 @@ public class BallMgr : Singleton<BallMgr>
                     touchedBall.SetActiveState(Ball.State.IDLE, true);
                 }
             }
+            // touch same ball || another activated ball
+            else if (_tileId == touchedBallId || touchBall.GetState() != Ball.State.INVISIBLE)
+            {
+                touchedBall.SetActiveState(Ball.State.IDLE, true);
+            }
+
             touchedBallId = -1;
         }
     }
 
     public void OnEndOneTurn()
     {
+        // invisible spending small ball
+        if (smallBallOverlayed != -1 && smallBallOverlayed < lBalls.Count)
+        {
+            Ball smallBall = lBalls[smallBallOverlayed];
+            smallBall.OnOverlayed();
+            smallBallOverlayed = -1;
+        }
+
         GrowAllSmallBalls();    // grow all small balls
         SpawnRandomBalls(Ball.State.GROWSMALL);     // spawn random balls
     }
@@ -129,7 +141,19 @@ public class BallMgr : Singleton<BallMgr>
     private void OnMovingBall(Ball _moveBall, int _desTileId)
     {
         Ball desBall = lBalls[_desTileId];
-        // swap Tile ID of 2 balls
+
+        // small ball (which overlayed later)
+        if (desBall.GetState() == Ball.State.IDLE && desBall.GetSize() == Ball.Size.SMALL)
+            UpdateListSmallBalls(false, desBall.GetTileId());   // remove this id from list small balls
+        // change position for invisible ball
+        else
+            desBall.SetPosition(_moveBall.GetPosition());
+
+        // update empty slot
+        UpdateListEmptyTiles(true, _moveBall.GetTileId());      // add new empty slot (where ball start moving)
+        UpdateListEmptyTiles(false, desBall.GetTileId());       // remove empty slot (where ball move to)
+
+        // SWAP Tile ID of 2 balls
         int tmpId = _moveBall.GetTileId();
         _moveBall.SetTileId(desBall.GetTileId());
         desBall.SetTileId(tmpId);
@@ -138,12 +162,9 @@ public class BallMgr : Singleton<BallMgr>
         lBalls[desBall.GetTileId()] = desBall;
         lBalls[_moveBall.GetTileId()] = _moveBall;
 
-        // change position of destination ball
-        desBall.SetPosition(_moveBall.GetPosition());
-
-        // update empty slot
-        UpdateListEmptyTiles(true, desBall.GetTileId());    // add new empty slot
-        UpdateListEmptyTiles(false, _moveBall.GetTileId()); // remove empty slot
+        // spending process small overlayed later
+        if (desBall.GetState() == Ball.State.IDLE && desBall.GetSize() == Ball.Size.SMALL)
+            smallBallOverlayed = desBall.GetTileId();
     }
 
     // === spawn ball ===
