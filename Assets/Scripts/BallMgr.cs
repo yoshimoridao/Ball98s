@@ -8,7 +8,8 @@ public class BallMgr : Singleton<BallMgr>
     public GameObject prefBall;
 
     // properties
-    public int ballPerTurn = 3;
+    public int ballsGetPoint = 3;
+    public int ballSpawnPerTurn = 3;
     public float ballScale = 0.8f;  // ball's scale (ratio vs tile's size)
 
     private List<Ball> lBalls = new List<Ball>();           // list contains all of balls entity on board
@@ -17,12 +18,10 @@ public class BallMgr : Singleton<BallMgr>
     [SerializeField]
     private List<int> lSmallBalls = new List<int>();        // list contains balls scal full size next turn
     private int smallBallOverlayed = -1;
-    private float ballSize;
-
-    private int touchedBallId = -1;
-
     [SerializeField]
-    public Path shortestPath;
+    private int movingBallId = -1;
+    private float ballSize;
+    private int touchedBallId = -1;
 
     // ========================================================== GET/ SET ==========================================================
     public float GetBallSize() { return ballSize; }
@@ -133,8 +132,11 @@ public class BallMgr : Singleton<BallMgr>
             smallBallOverlayed = -1;
         }
 
+        CheckBallsMatchType();  // check all balls matching type
         GrowAllSmallBalls();    // grow all small balls
         SpawnRandomBalls(Ball.State.GROWSMALL);     // spawn random balls
+
+        movingBallId = -1;
     }
 
     // ========================================================== PRIVATE FUNC ==========================================================
@@ -165,6 +167,7 @@ public class BallMgr : Singleton<BallMgr>
         // spending process small overlayed later
         if (desBall.GetState() == Ball.State.IDLE && desBall.GetSize() == Ball.Size.SMALL)
             smallBallOverlayed = desBall.GetTileId();
+        movingBallId = _moveBall.GetTileId();   // store id of moving ball
     }
 
     // === spawn ball ===
@@ -172,14 +175,14 @@ public class BallMgr : Singleton<BallMgr>
     {
         // gen balls
         List<int> spawnIds = new List<int>();
-        int turn = Mathf.Min(ballPerTurn, lEmptyTiles.Count);
+        int turn = Mathf.Min(ballSpawnPerTurn, lEmptyTiles.Count);
         // Random Position (not match prev pos)
         for (int i = 0; i < turn; i++)
         {
             int rdId = -1;
             do
             {
-                rdId = (turn == ballPerTurn) ? Random.Range(0, lEmptyTiles.Count) : i;
+                rdId = (turn == ballSpawnPerTurn) ? Random.Range(0, lEmptyTiles.Count) : i;
             } while (spawnIds.Contains(rdId) || rdId >= lEmptyTiles.Count);
             spawnIds.Add(lEmptyTiles[rdId]);
         }
@@ -193,7 +196,7 @@ public class BallMgr : Singleton<BallMgr>
         }
 
         // GAME OVER
-        if (turn < ballPerTurn)
+        if (turn < ballSpawnPerTurn)
         {
             Debug.Log("GAME OVER");
         }
@@ -253,6 +256,50 @@ public class BallMgr : Singleton<BallMgr>
             int findId = lSmallBalls.FindIndex(x => x == _tileId);
             if (findId != -1)
                 lSmallBalls.RemoveAt(findId);
+        }
+    }
+
+    private void CheckBallsMatchType()
+    {
+        List<int> bigBalls = new List<int>();
+        // Filter all ball has big size
+        for (int i = 0; i < lBalls.Count; i++)
+        {
+            if (!lEmptyTiles.Contains(i) && !lSmallBalls.Contains(i) && i < lBalls.Count)
+                bigBalls.Add(i);
+        }
+
+        // Search all balls matching type
+        int boardDimension = BoardMgr.Instance.boardDimension;
+        List<int> matchedBallIds = new List<int>();
+        for (int i = 0; i < bigBalls.Count; i++)
+        {
+            for (int dir = 0; dir < 8; dir++)
+            {
+                List<int> path = new List<int>();
+                path.Add(bigBalls[i]);
+
+                Utils.FindPathMathColor(new List<Ball>(lBalls), boardDimension, bigBalls, dir, ref path);
+
+                // add matched id 
+                if (path.Count >= ballsGetPoint && path.Contains(movingBallId))
+                {
+                    foreach (int id in path)
+                        if (!matchedBallIds.Contains(id))
+                            matchedBallIds.Add(id);
+                }
+            }
+        }
+
+        // Explode all matched color
+        for (int i = 0; i < matchedBallIds.Count; i++)
+        {
+            if (matchedBallIds[i] < lBalls.Count)
+            {
+                Ball ball = lBalls[matchedBallIds[i]];
+                ball.OnExplode();
+                UpdateListEmptyTiles(true, ball.GetTileId());   // add empty slot
+            }
         }
     }
 

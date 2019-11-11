@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefTile: {fileID: 1490553932928276, guid: deaf8f89984abee4da05e427efe921bd, type: 2}
-  boardDimension: 4
+  boardDimension: 9
   boardScale: 0.75
   tileOffset: 0.04
   rectBoardSize:
@@ -388,10 +388,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefBall: {fileID: 1863115703637698, guid: 149ac10d5af2b18468b599666d3a9b6f, type: 2}
-  ballPerTurn: 3
+  ballsGetPoint: 3
+  ballSpawnPerTurn: 3
   ballScale: 0.9
   lEmptyTiles: 
   lSmallBalls: 
+  movingBallId: -1
 --- !u!4 &1730906001 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4033640310046594, guid: 149ac10d5af2b18468b599666d3a9b6f,

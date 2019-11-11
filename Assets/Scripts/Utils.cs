@@ -79,4 +79,64 @@ public class Utils
         
         return BreadthFirstSearch(_board, ref _qPath, _boardDimension, _endPos);
     }
+
+    public static void FindPathMathColor(List<Ball> _lBalls, int _boardDimension, List<int> _checkBalls, int _dir, ref List<int> _path)
+    {
+        if (_path.Count == 0)
+            return;
+
+        // check 8 direction
+        int nextId = GetNextId(_boardDimension, _path[_path.Count - 1], _dir);
+
+        if (nextId >= 0 && nextId < _lBalls.Count && _checkBalls.Contains(nextId))
+        {
+            // if match type
+            Ball nextBall = _lBalls[nextId];
+            Ball fstBall = _lBalls[_path[0]];
+            if (nextBall.GetState() == Ball.State.IDLE && nextBall.GetSize() == Ball.Size.BIG && nextBall.GetType() == fstBall.GetType())
+            {
+                _path.Add(nextId);
+                // keep going find
+                FindPathMathColor(_lBalls, _boardDimension, _checkBalls, _dir, ref _path);
+            }
+        }
+    }
+
+    private static int GetNextId(int _boardDimension, int _id, int _dir)
+    {
+        int nextId = _id;
+        switch (_dir)
+        {
+            case 0: // north
+            case 1: // south
+                nextId = _id + (_dir == 1 ? 1 : -1) * _boardDimension;
+                if (nextId % _boardDimension != _id % _boardDimension)    // check same column
+                    return -1;
+                break;
+            case 2: // west
+            case 3: // east
+                nextId = _id + (_dir == 3 ? 1 : -1);
+                if ((int)(nextId / _boardDimension) != (int)(_id / _boardDimension))    // check same row
+                    return -1;
+                break;
+            case 4:
+                nextId -= _boardDimension;
+                nextId++;
+                break;      // n-e
+            case 5:
+                nextId -= _boardDimension;
+                nextId--;
+                break;      // n-w
+            case 6:
+                nextId += _boardDimension;
+                nextId++;
+                break;      // s-e
+            case 7:
+                nextId += _boardDimension;
+                nextId--;
+                break;      // s-w
+        }
+
+        return nextId;
+    }
 }

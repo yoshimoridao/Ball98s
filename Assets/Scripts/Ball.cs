@@ -20,6 +20,7 @@ public class Ball : MonoBehaviour
     private Type type;
     [SerializeField]
     private State state = State.IDLE;
+    [SerializeField]
     private Size size = Size.SMALL;
 
     [SerializeField]
@@ -76,7 +77,10 @@ public class Ball : MonoBehaviour
             case State.GROWSMALL:
             case State.GROWBIG:
             case State.BOUNCE:
-                size = state == State.GROWBIG ? Size.BIG : Size.SMALL;
+                if (state == State.GROWBIG)
+                    size = Size.BIG;
+                else if (state == State.GROWSMALL)
+                    size = Size.SMALL;
 
                 if (_isActive)
                     PlayAnimation(state);
@@ -219,6 +223,12 @@ public class Ball : MonoBehaviour
         SetActiveState(Ball.State.INVISIBLE, true);
     }
 
+    public void OnExplode()
+    {
+        Debug.Log("EXPLODE = " + GetTileId());
+        // invisible
+        SetActiveState(Ball.State.INVISIBLE, true);
+    }
     // ========================================================== PRIVATE FUNC ==========================================================
     private void ChangeSprite()
     {
