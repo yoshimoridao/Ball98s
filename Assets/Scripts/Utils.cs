@@ -21,7 +21,7 @@ public class Utils
         if (_startPos < Mathf.Pow(_boardDimension, 2))
         {
             qPath.Enqueue(new Path(_startPos));
-            path = BreadthFirstSearch(new List<int>(_board), ref qPath, _boardDimension, _endPos);
+            path = BreadthFirstSearch(_board, ref qPath, _boardDimension, _endPos);
         }
 
         return path;

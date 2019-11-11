@@ -103,7 +103,9 @@ public class BallMgr : Singleton<BallMgr>
             else if (touchBall.GetState() == Ball.State.INVISIBLE)
             {
                 // if ball has moving path (-> swap index of 2 ball in storage)
-                if (touchedBall.FindPath(lEmptyTiles, _tileId))
+                List<int> cloneList = new List<int>(lEmptyTiles);
+                cloneList.AddRange(lSmallBalls);
+                if (touchedBall.FindPath(cloneList, _tileId))
                 {
                     OnMovingBall(touchedBall, _tileId);
                 }
