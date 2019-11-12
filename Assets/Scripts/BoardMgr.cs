@@ -5,6 +5,7 @@ using UnityEngine;
 public class BoardMgr : Singleton<BoardMgr>
 {
     public GameObject prefTile;
+    public GameObject topPanelZone;
 
     public int boardDimension = 9;
     // scale ratio vs camera height
@@ -67,19 +68,25 @@ public class BoardMgr : Singleton<BoardMgr>
     {
         Camera cam = Camera.main;
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        // set width, height of board following ratio vs height
+        // set width, height of Board Background (following ratio vs camera's height)
         rectBoardSize.width = rectBoardSize.height = cam.orthographicSize * 2 * boardScale;
-
         transform.localScale = new Vector3(rectBoardSize.width / sr.bounds.size.x, rectBoardSize.height / sr.bounds.size.y, 1.0f);
-        // set position for board
+        // set position of Board Background
         Vector3 pos = transform.position;
         pos.x = cam.transform.position.x;
         pos.y = (cam.transform.position.y - cam.orthographicSize) + rectBoardSize.height / 2.0f;
         transform.position = pos;
-
-        // get top-left position of board
+        // top-left position of Board
         rectBoardSize.x = sr.bounds.min.x;
         rectBoardSize.y = sr.bounds.max.y;
+
+        // set width, height of Top Zone
+        SpriteRenderer topPanelSr = topPanelZone.GetComponent<SpriteRenderer>();
+        topPanelZone.transform.localScale = new Vector3(rectBoardSize.width / topPanelSr.bounds.size.x, (cam.orthographicSize * 2 - rectBoardSize.height - 0.2f) / topPanelSr.bounds.size.y, 1.0f);
+        pos.y = (cam.transform.position.y + cam.orthographicSize) - (cam.orthographicSize * 2 - rectBoardSize.height) / 2.0f;
+        // set pos of Top Zone
+        topPanelZone.transform.position = pos;
+        TopPanelMgr.Instance.SetPositionBallPanel(Camera.main.WorldToScreenPoint(topPanelZone.transform.position));
 
         // generate tiles
         tileSize = rectBoardSize.width / (float)boardDimension;

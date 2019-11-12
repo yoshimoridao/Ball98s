@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Ball : MonoBehaviour
 {
-    public string ballImgPath = "Image/{0}_ball";
+    public static string ballImgPath = "Image/{0}_ball";
     public enum Type { BLUE, BROWN, GREEN, LIGHT_BLUE, PINK, RED, GHOST };
     public enum State { INVISIBLE, IDLE, GROWSMALL, GROWBIG, BOUNCE, MOVING };
     public enum Size { SMALL, BIG };
@@ -103,6 +103,17 @@ public class Ball : MonoBehaviour
                     SetActiveState(State.IDLE, true);
                 break;
         }
+    }
+
+    public static Sprite GetSprite(Ball.Type _type)
+    {
+        Sprite sprite = Resources.Load<Sprite>(ballImgPath.Replace("{0}", _type.ToString().ToLower()));
+        if (sprite)
+            return sprite;
+        else
+            Debug.LogError("Missing sprite of " + _type.ToString() + " ball");
+
+        return null;
     }
     // ========================================================== UNITY FUNC ==========================================================
     private void Start()
@@ -235,15 +246,9 @@ public class Ball : MonoBehaviour
         if (!srBall)
             srBall = GetComponent<SpriteRenderer>();
 
-        Sprite sprite = Resources.Load<Sprite>(ballImgPath.Replace("{0}", type.ToString().ToLower()));
+        Sprite sprite = GetSprite(type);
         if (sprite)
-        {
             srBall.sprite = sprite;
-        }
-        else
-        {
-            Debug.LogError("Missing sprite of " + type.ToString() + " ball");
-        }
     }
 
     private void PlayAnimation(State _state)

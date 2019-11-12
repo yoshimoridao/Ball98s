@@ -89,6 +89,7 @@
     <Compile Include="Assets\Scripts\Singleton.cs" />
     <Compile Include="Assets\Scripts\Utils.cs" />
     <Compile Include="Assets\Scripts\ZDepth.cs" />
+    <Compile Include="Assets\TopPanelMgr.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

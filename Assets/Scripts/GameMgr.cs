@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameMgr : MonoBehaviour
+public class GameMgr : Singleton<GameMgr>
 {
-    public BoardMgr boardMgr;
-    public BallMgr ballMgr;
+    public int timeForRound = 600;
 
-	void Start ()
+    private void Awake()
     {
-        boardMgr.Init();
-        ballMgr.Init();
+        instance = this;
+    }
+
+    void Start ()
+    {
+        BoardMgr.Instance.Init();
+        BallMgr.Instance.Init();
+        TopPanelMgr.Instance.Init();
 	}
 	
 	void Update ()

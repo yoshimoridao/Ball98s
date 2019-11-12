@@ -22,6 +22,7 @@ public class BallMgr : Singleton<BallMgr>
     private int movingBallId = -1;
     private float ballSize;
     private int touchedBallId = -1;
+    private List<Ball.Type> lnextTypes = new List<Ball.Type>();
 
     // ========================================================== GET/ SET ==========================================================
     public float GetBallSize() { return ballSize; }
@@ -187,14 +188,37 @@ public class BallMgr : Singleton<BallMgr>
             spawnIds.Add(lEmptyTiles[rdId]);
         }
 
-        for (int i = 0; i < spawnIds.Count; i++)
+        // Random Type
+        List<Ball.Type> rdTypes = new List<Ball.Type>();
+        for (int i = 0; i < 3; i++)
         {
-            // Random Type
-            Ball.Type rdType = (Ball.Type)Random.Range((int)Ball.Type.BLUE, (int)Ball.Type.GHOST + 1);
-            // spawn
-            SpawnBalls(spawnIds[i], rdType, _state);
+            Ball.Type type = Ball.Type.BLUE;    // default color
+            // get type from random list 
+            if (i < lnextTypes.Count)
+            {
+                rdTypes.Add(lnextTypes[i]);
+            }
+            else
+            {
+                // random type for this turn
+                type = (Ball.Type)Random.Range((int)Ball.Type.BLUE, (int)Ball.Type.GHOST + 1);
+                rdTypes.Add(type);
+            }
+
+            // random for next turn
+            type = (Ball.Type)Random.Range((int)Ball.Type.BLUE, (int)Ball.Type.GHOST + 1);
+            if (i < lnextTypes.Count)
+                lnextTypes[i] = (type);
+            else
+                lnextTypes.Add(type);
         }
 
+        for (int i = 0; i < spawnIds.Count; i++)
+            SpawnBalls(spawnIds[i], rdTypes[i], _state);
+
+        // Show Panel
+        if (lnextTypes.Count >= 3)
+            TopPanelMgr.instance.RefreshBallPanel(Ball.GetSprite(lnextTypes[0]), Ball.GetSprite(lnextTypes[1]), Ball.GetSprite(lnextTypes[2]));
         // GAME OVER
         if (turn < ballSpawnPerTurn)
         {
