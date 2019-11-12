@@ -103,9 +103,9 @@ public class BallMgr : Singleton<BallMgr>
         else if (touchedBallId != -1)
         {
             Ball touchedBall = lBalls[touchedBallId];
-           
+
             // touch available slot (invisible ball || small ball)
-            if (touchBall.GetState() == Ball.State.INVISIBLE || 
+            if (touchBall.GetState() == Ball.State.INVISIBLE ||
                 (touchBall.GetState() == Ball.State.IDLE && touchBall.GetSize() == Ball.Size.SMALL))
             {
                 // set movement map
@@ -121,7 +121,7 @@ public class BallMgr : Singleton<BallMgr>
                     map = new List<int>(lEmptyTiles);
                     map.AddRange(lSmallBalls);
                 }
-                
+
                 // if ball has founded mvm path
                 if (touchedBall.FindPath(map, _tileId))
                     OnMovingBall(touchedBall, _tileId);
@@ -375,14 +375,23 @@ public class BallMgr : Singleton<BallMgr>
                 // add matched id 
                 if (path.Count >= ballsGetPoint && path.Contains(movingBallId))
                 {
-                    foreach (int id in path)
-                        if (!matchedBallIds.Contains(id))
-                            matchedBallIds.Add(id);
+                    //foreach (int id in path)
+                    //    if (!matchedBallIds.Contains(id))
+                    //        matchedBallIds.Add(id);
+                    matchedBallIds.AddRange(path);
                 }
             }
         }
 
         // Explode all matched color
+        // get color of path
+        int explodeType = -1; // default explode type
+        foreach(int id in matchedBallIds)
+        {
+            if (id < lBalls.Count && lBalls[id].GetType() != Ball.Type.COLORFULL)
+                explodeType = (int)lBalls[id].GetType();
+        }
+
         for (int i = 0; i < matchedBallIds.Count; i++)
         {
             if (matchedBallIds[i] < lBalls.Count)
@@ -393,7 +402,11 @@ public class BallMgr : Singleton<BallMgr>
 
                 // play fx explode on tile
                 Tile tile = BoardMgr.Instance.GetTile(ball.GetTileId());
-                tile.PlayHighlightAnim(ball.GetType());
+
+                if (ball.GetType() == Ball.Type.COLORFULL && explodeType == -1)
+                    explodeType = (ball as BallColorFull).GetSpriteId();
+
+                tile.PlayHighlightAnim((Ball.Type)explodeType);
             }
         }
 
@@ -403,6 +416,7 @@ public class BallMgr : Singleton<BallMgr>
             PlayerInfo.Instance.AddScore(matchedBallIds.Count);
             return true;
         }
+
         return false;
     }
 
