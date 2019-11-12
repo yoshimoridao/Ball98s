@@ -17,11 +17,13 @@ public class BallMgr : Singleton<BallMgr>
     private List<int> lEmptyTiles = new List<int>();        // list contains all of id of empty slots on board
     [SerializeField]
     private List<int> lSmallBalls = new List<int>();        // list contains balls scal full size next turn
+    [SerializeField]
     private List<Ball.Type> lnextTypes = new List<Ball.Type>();     // list contains type for next spawned balls
 
     private float ballSize;
     private int touchedBallId = -1;
     private int movingBallId = -1;
+    [SerializeField]
     private int smallBallOverlayed = -1;
 
     // ========================================================== GET/ SET ==========================================================
@@ -221,7 +223,8 @@ public class BallMgr : Singleton<BallMgr>
             do
             {
                 rdId = (turn == ballSpawnPerTurn) ? Random.Range(0, lEmptyTiles.Count) : i;
-            } while (spawnIds.Contains(rdId) || rdId >= lEmptyTiles.Count);
+            } while (rdId >= lEmptyTiles.Count || spawnIds.Contains(lEmptyTiles[rdId]));
+
             spawnIds.Add(lEmptyTiles[rdId]);
         }
 
