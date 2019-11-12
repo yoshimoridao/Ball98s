@@ -17,6 +17,8 @@ public class TopPanelMgr : Singleton<TopPanelMgr>
 
     private float timer;
 
+    // ========================================================== GET/ SET ==========================================================
+
     // ========================================================== UNITY FUNC ==========================================================
     private void Awake()
     {
@@ -29,6 +31,9 @@ public class TopPanelMgr : Singleton<TopPanelMgr>
 
     void Update ()
     {
+        if (GameMgr.Instance.GetGameState() != GameMgr.GameState.PLAYING)
+            return;
+
         timer -= Time.deltaTime;
         int minute = (int)(timer / 60);
         int seconds = (int)(timer % 60);
@@ -39,6 +44,11 @@ public class TopPanelMgr : Singleton<TopPanelMgr>
     public void Init()
     {
         timer = GameMgr.Instance.timeForRound;
+    }
+
+    public void SetActive(bool _isActive)
+    {
+        gameObject.SetActive(_isActive);
     }
 
     public void SetPositionBallPanel(Vector3 _val)

@@ -38,6 +38,15 @@ public class BallMgr : Singleton<BallMgr>
 
     void Update()
     {
+        if (GameMgr.Instance.GetGameState() != GameMgr.GameState.PLAYING)
+            return;
+
+        // spawn for first
+        if (lEmptyTiles.Count == lBalls.Count && lSmallBalls.Count == 0)
+        {
+            // default spawn big size
+            SpawnRandomBalls(Ball.State.GROWBIG);
+        }
     }
 
     // ========================================================== PUBLIC FUNC ==========================================================
@@ -74,9 +83,6 @@ public class BallMgr : Singleton<BallMgr>
             lBalls.Add(compBall);
             lEmptyTiles.Add(i); // default all slots available to spawn
         }
-
-        // default spawn big size
-        SpawnRandomBalls(Ball.State.GROWBIG);
     }
 
     public void OnTouchBall(int _tileId)
@@ -85,7 +91,7 @@ public class BallMgr : Singleton<BallMgr>
         // First touch (select ball)
         if (touchedBallId == -1 && _tileId < lBalls.Count)
         {
-            if (touchBall.GetState() == Ball.State.IDLE)
+            if (touchBall.GetState() == Ball.State.IDLE && touchBall.GetSize() == Ball.Size.BIG)
             {
                 touchedBallId = _tileId;    // store touched ball's id
                 touchBall.SetActiveState(Ball.State.BOUNCE, true);
@@ -156,6 +162,19 @@ public class BallMgr : Singleton<BallMgr>
         SpawnRandomBalls(Ball.State.GROWSMALL);     // spawn random balls
 
         movingBallId = -1;
+    }
+
+    public void OnRestart()
+    {
+        lSmallBalls.Clear();
+        lEmptyTiles.Clear();
+
+        for (int i = 0; i < lBalls.Count; i++)
+        {
+            Ball ball = lBalls[i];
+            ball.SetActiveState(Ball.State.INVISIBLE, true);
+            lEmptyTiles.Add(i);
+        }
     }
 
     // ========================================================== PRIVATE FUNC ==========================================================
@@ -237,9 +256,11 @@ public class BallMgr : Singleton<BallMgr>
         // Show Panel
         if (lnextTypes.Count >= 3)
             TopPanelMgr.instance.RefreshBallPanel(Ball.GetSprite(lnextTypes[0]), Ball.GetSprite(lnextTypes[1]), Ball.GetSprite(lnextTypes[2]));
-        // GAME OVER
-        if (turn < ballSpawnPerTurn)
+
+        // GAME OVER (out of slot of ball to spawn)
+        if (turn < ballSpawnPerTurn || lEmptyTiles.Count <= 0)
         {
+            GameMgr.Instance.OnGameOver();
             Debug.Log("GAME OVER");
         }
     }

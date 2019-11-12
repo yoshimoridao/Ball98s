@@ -39,6 +39,9 @@ public class BoardMgr : Singleton<BoardMgr>
 	
 	void Update ()
     {
+        if (GameMgr.Instance.GetGameState() != GameMgr.GameState.PLAYING)
+            return;
+
 		if (InputMgr.instance.GetMouseState() == InputMgr.MouseState.DOWN)
         {
             Vector3 mousePos = InputMgr.instance.GetMousePosition();
