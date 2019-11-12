@@ -1,5 +1,6 @@
 * click to another idle ball				- done
 * moving ghost type							- done
+- shader moving ghost move though another ball
 - add ui (point - gameover - startgame)		- done point
 - save game
 - fx moving ball

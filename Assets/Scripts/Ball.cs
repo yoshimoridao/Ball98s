@@ -6,7 +6,7 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     public static string ballImgPath = "Image/{0}_ball";
-    public enum Type { BLUE, BROWN, GREEN, LIGHT_BLUE, PINK, RED, GHOST };
+    public enum Type { BLUE, BROWN, GREEN, CYAN, PINK, RED, GHOST };
     public enum State { INVISIBLE, IDLE, GROWSMALL, GROWBIG, BOUNCE, MOVING };
     public enum Size { SMALL, BIG };
 
@@ -151,7 +151,7 @@ public class Ball : MonoBehaviour
         // update velocity
         oldMvmVelocity = mvmVelocity;
         int boardDimension = BoardMgr.Instance.boardDimension;
-        List<GameObject> lTiles = BoardMgr.Instance.GetListTiles();
+        List<Tile> lTiles = BoardMgr.Instance.GetListTiles();
         int curTileId = movingPath.GetNode(curStep);
 
         // if next step is available
@@ -172,15 +172,19 @@ public class Ball : MonoBehaviour
                 mvmVelocity.y = (nextTileId > curTileId ? -1 : 1) * mvmSpeed;
             }
 
-            GameObject curTile = lTiles[curTileId];
+            Tile curTile = lTiles[curTileId];
             // snap to instersection pos if change velocity
             if ((mvmVelocity.x != 0 && oldMvmVelocity.y != 0) || (mvmVelocity.y != 0 && oldMvmVelocity.x != 0))
-                SetPositionXY(new Vector2(curTile.transform.position.x, curTile.transform.position.y));
+                SetPositionXY(curTile.GetPosition());
 
             // update step
-            GameObject nextTile = lTiles[nextTileId];
-            if (IsReachNode(nextTile))
+            Tile nextTile = lTiles[nextTileId];
+            if (IsReachNextTile(nextTile))
+            {
                 curStep++;
+
+                nextTile.PlayMovingAnim(GetType());
+            }
         }
 
         // update position
@@ -196,9 +200,9 @@ public class Ball : MonoBehaviour
         if (curStep + 1 >= movingPath.GetNodesCount())
         {
             // snap position
-            GameObject curTile = lTiles[movingPath.GetNode(curStep)];
-            if (IsReachNode(curTile))
-                SetPositionXY(new Vector2(curTile.transform.position.x, curTile.transform.position.y));
+            Tile curTile = lTiles[movingPath.GetNode(curStep)];
+            if (IsReachNextTile(curTile))
+                SetPositionXY(curTile.GetPosition());
 
             // disable MOVING state
             SetActiveState(State.MOVING, false);
@@ -226,9 +230,9 @@ public class Ball : MonoBehaviour
     public void OnOverlayed()
     {
         // snap to tile' position
-        GameObject tile = BoardMgr.Instance.GetTile(GetTileId());
+        Tile tile = BoardMgr.Instance.GetTile(GetTileId());
         if (tile)
-            SetPositionXY(tile.transform.position);
+            SetPositionXY(tile.GetPosition());
 
         // invisible 
         SetActiveState(Ball.State.INVISIBLE, true);
@@ -256,13 +260,14 @@ public class Ball : MonoBehaviour
         animator.Play(_state.ToString().ToLower(), -1, 0);
     }
 
-    private bool IsReachNode(GameObject _node)
+    private bool IsReachNextTile(Tile _tile)
     {
+        Vector2 tilePos = _tile.GetPosition();
         float ballSize = BallMgr.Instance.GetBallSize();
-        if ((mvmVelocity.x > 0 && Mathf.Abs(transform.position.x - _node.transform.position.x) <= ballSize / 4.0f) ||
-             (mvmVelocity.x < 0 && Mathf.Abs(transform.position.x - _node.transform.position.x) <= ballSize / 4.0f) ||
-             (mvmVelocity.y > 0 && Mathf.Abs(transform.position.y - _node.transform.position.y) <= ballSize / 4.0f) ||
-             (mvmVelocity.y < 0 && Mathf.Abs(transform.position.y - _node.transform.position.y) <= ballSize / 4.0f))
+        if ((mvmVelocity.x > 0 && Mathf.Abs(transform.position.x - tilePos.x) <= ballSize / 4.0f) ||
+             (mvmVelocity.x < 0 && Mathf.Abs(transform.position.x - tilePos.x) <= ballSize / 4.0f) ||
+             (mvmVelocity.y > 0 && Mathf.Abs(transform.position.y - tilePos.y) <= ballSize / 4.0f) ||
+             (mvmVelocity.y < 0 && Mathf.Abs(transform.position.y - tilePos.y) <= ballSize / 4.0f))
             return true;
         return false;
     }

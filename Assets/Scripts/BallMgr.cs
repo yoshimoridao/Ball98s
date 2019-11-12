@@ -44,12 +44,12 @@ public class BallMgr : Singleton<BallMgr>
     public void Init()
     {
         // get list of tiles on board
-        List<GameObject> lTiles = BoardMgr.Instance.GetListTiles();
+        List<Tile> lTiles = BoardMgr.Instance.GetListTiles();
 
         // gen ball objects
         for (int i = 0; i < lTiles.Count; i++)
         {
-            GameObject tile = lTiles[i];
+            Tile tile = lTiles[i];
             GameObject genBall = GameObject.Instantiate(prefBall, transform);
             Ball compBall = genBall.GetComponent<Ball>();
             SpriteRenderer srBall = compBall.GetSpriteRenderer();
@@ -57,11 +57,11 @@ public class BallMgr : Singleton<BallMgr>
             genBall.name = "ball_" + i.ToString();
             // set position
             Vector3 posBall = compBall.GetPosition();
-            compBall.SetPosition(new Vector3(tile.transform.position.x, tile.transform.position.y, ZDepth.GetDepth(ZDepth.Layer.BALL)));
+            compBall.SetPosition(new Vector3(tile.GetPosition().x, tile.GetPosition().y, ZDepth.GetDepth(ZDepth.Layer.BALL)));
             // set scale
             if (ballSize == 0)
             {
-                SpriteRenderer tileSr = tile.GetComponent<SpriteRenderer>();
+                SpriteRenderer tileSr = tile.GetSpriteRenderer();
                 ballSize = tileSr.bounds.size.x * ballScale;
                 ballSize = Mathf.Min(ballSize / srBall.bounds.size.x, ballSize / srBall.bounds.size.y);
             }
@@ -341,6 +341,10 @@ public class BallMgr : Singleton<BallMgr>
                 Ball ball = lBalls[matchedBallIds[i]];
                 ball.OnExplode();
                 UpdateListEmptyTiles(true, ball.GetTileId());   // add empty slot
+
+                // play fx explode on tile
+                Tile tile = BoardMgr.Instance.GetTile(ball.GetTileId());
+                tile.PlayHighlightAnim(ball.GetType());
             }
         }
 

@@ -12,19 +12,19 @@ public class BoardMgr : Singleton<BoardMgr>
     public float boardScale = 0.8f;
     public float tileOffset = 0.1f;
 
-    private List<GameObject> lTiles = new List<GameObject>();
+    private List<Tile> lTiles = new List<Tile>();
     [SerializeField]
     private Rect rectBoardSize = Rect.zero;
     private float tileSize;
 
     // ========================================================== GETTER/ SETTER ==========================================================
-    public GameObject GetTile(int _tileId)
+    public Tile GetTile(int _tileId)
     {
         if (_tileId < lTiles.Count)
             return lTiles[_tileId];
         return null;
     }
-    public List<GameObject> GetListTiles() { return lTiles; }
+    public List<Tile> GetListTiles() { return lTiles; }
 
     // ========================================================== UNITY FUNC ==========================================================
     private void Awake()
@@ -108,7 +108,7 @@ public class BoardMgr : Singleton<BoardMgr>
             // set parent
             genTile.transform.parent = transform;
             // store tiles
-            lTiles.Add(genTile);
+            lTiles.Add(genTile.GetComponent<Tile>());
         }
     }
 
