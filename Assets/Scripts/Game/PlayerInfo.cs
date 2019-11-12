@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerInfo : Singleton<PlayerInfo>
 {
-    private int highScore;
-    private int score;
+    private int highScore = 0;
+    private int score = 0;
 
     // ========================================================== GET/ SET ==========================================================
     public int GetHighScore() { return highScore; }
@@ -25,6 +25,8 @@ public class PlayerInfo : Singleton<PlayerInfo>
     private void Awake()
     {
         instance = this;
+        highScore = 0;
+        score = 0;
     }
 
     void Start()
@@ -40,9 +42,6 @@ public class PlayerInfo : Singleton<PlayerInfo>
     // ========================================================== PUBLIC FUNC ==========================================================
     public void Init()
     {
-        score = 0;
-        highScore = 0;
-
         TopPanelMgr.Instance.RefreshScorePanel(score);
         TopPanelMgr.Instance.RefreshHighscorePanel(highScore);
     }

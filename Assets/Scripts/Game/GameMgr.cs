@@ -44,6 +44,9 @@ public class GameMgr : Singleton<GameMgr>
     public void OnRestartGame()
     {
         SetGameState(GameState.PLAYING);
+
+        PlayerInfo.Instance.Init();
+        TopPanelMgr.Instance.Init();
         BallMgr.Instance.OnRestart();
     }
 

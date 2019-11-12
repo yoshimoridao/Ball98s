@@ -111,17 +111,17 @@ public class Utils
                     {
                         int id = _path[i];
                         Ball.Type type = _lBalls[id].GetType();
-                        // get color of path (except color full ball)
+                        // get color of path (except ball: color full)
                         if (type != Ball.Type.COLORFULL && type == nextBall.GetType())
                         {
                             isKeepFinding = true;
                             break;
                         }
-                        // if all bals are colorfull
                         if (type == Ball.Type.COLORFULL)
                             colorFullCounter++;
                     }
 
+                    // if all balls are colorfull
                     if (!isKeepFinding && colorFullCounter == _path.Count)
                         isKeepFinding = true;
                 }

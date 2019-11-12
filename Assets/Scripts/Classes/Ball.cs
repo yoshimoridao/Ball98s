@@ -207,7 +207,11 @@ public class Ball : MonoBehaviour
             {
                 curStep++;
 
-                nextTile.PlayMovingAnim(GetType());
+                // play fx moving
+                if (GetType() == Type.COLORFULL)
+                    nextTile.PlayMovingAnim((Ball.Type)(this as BallColorFull).GetSpriteId());
+                else
+                    nextTile.PlayMovingAnim(GetType());
             }
         }
 

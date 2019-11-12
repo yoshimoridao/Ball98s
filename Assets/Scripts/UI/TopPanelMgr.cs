@@ -34,10 +34,15 @@ public class TopPanelMgr : Singleton<TopPanelMgr>
         if (GameMgr.Instance.GetGameState() != GameMgr.GameState.PLAYING)
             return;
 
+        // count time
         timer -= Time.deltaTime;
         int minute = (int)(timer / 60);
         int seconds = (int)(timer % 60);
         txtTimer.text = (minute < 10 ? "0" : "") + minute.ToString() + ":" + (seconds < 10 ? "0" : "") + seconds.ToString();
+
+        // time end
+        if (minute == 0 && seconds == 0)
+            GameMgr.Instance.OnGameOver();
 	}
 
     // ========================================================== PUBLIC FUNC ==========================================================

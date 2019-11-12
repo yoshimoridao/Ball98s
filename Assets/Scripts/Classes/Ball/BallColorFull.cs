@@ -10,6 +10,11 @@ public class BallColorFull : Ball
     private int spriteId = 0;
 
     // ========================================================== UNITY FUNC ==========================================================
+    public int GetSpriteId()
+    {
+        return spriteId;
+    }
+
     public void Start()
     {
         base.Start();
