@@ -867,7 +867,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefTile: {fileID: 1490553932928276, guid: deaf8f89984abee4da05e427efe921bd, type: 2}
   topPanelZone: {fileID: 1263224676}
-  boardDimension: 4
+  boardDimension: 9
   boardScale: 0.8
   tileOffset: 0.04
   rectBoardSize:
@@ -1384,6 +1384,8 @@ MonoBehaviour:
   ballScale: 0.9
   lEmptyTiles: 
   lSmallBalls: 
+  lnextTypes: 
+  smallBallOverlayed: -1
 --- !u!1 &1800412877
 GameObject:
   m_ObjectHideFlags: 0

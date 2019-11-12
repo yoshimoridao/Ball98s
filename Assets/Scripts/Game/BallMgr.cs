@@ -159,10 +159,11 @@ public class BallMgr : Singleton<BallMgr>
             smallBallOverlayed = -1;
         }
 
-        CheckBallsMatchType();  // check all balls matching type
-        GrowAllSmallBalls();    // grow all small balls
-        SpawnRandomBalls(Ball.State.GROWSMALL);     // spawn random balls
-
+        if (!CheckBallsMatchType())  // next turn if not any path matched
+        {
+            GrowAllSmallBalls();    // grow all small balls
+            SpawnRandomBalls(Ball.State.GROWSMALL);     // spawn random balls
+        }
         movingBallId = -1;
     }
 
@@ -325,7 +326,7 @@ public class BallMgr : Singleton<BallMgr>
         }
     }
 
-    private void CheckBallsMatchType()
+    private bool CheckBallsMatchType()
     {
         List<int> bigBalls = new List<int>();
         // Filter all ball has big size
@@ -373,7 +374,12 @@ public class BallMgr : Singleton<BallMgr>
         }
 
         // Update score
-        PlayerInfo.Instance.AddScore(matchedBallIds.Count);
+        if (matchedBallIds.Count > 0)
+        {
+            PlayerInfo.Instance.AddScore(matchedBallIds.Count);
+            return true;
+        }
+        return false;
     }
 
     // ==========

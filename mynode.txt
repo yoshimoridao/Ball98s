@@ -1,8 +1,9 @@
 * click to another idle ball				- done
 * moving ghost type							- done
+* small balls overlay
 - shader moving ghost move though another ball
-- add ui (point - gameover - startgame)		- done point
+- add ui (point - gameover - startgame)		- done
 - save game
-- fx moving ball
-- fx explode (match ball)
+- fx moving ball							- done
+- fx explode (match ball)					- done
 - scriptcreateobj
