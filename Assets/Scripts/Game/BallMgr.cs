@@ -242,12 +242,12 @@ public class BallMgr : Singleton<BallMgr>
             else
             {
                 // random type for this turn
-                type = (Ball.Type)Random.Range((int)Ball.Type.BLUE, (int)Ball.Type.GHOST + 1);
+                type = (Ball.Type)Random.Range((int)Ball.Type.BLUE, (int)Ball.Type.COUNT);
                 rdTypes.Add(type);
             }
 
             // random for next turn
-            type = (Ball.Type)Random.Range((int)Ball.Type.BLUE, (int)Ball.Type.GHOST + 1);
+            type = (Ball.Type)Random.Range((int)Ball.Type.BLUE, (int)Ball.Type.COUNT);
             if (i < lnextTypes.Count)
                 lnextTypes[i] = (type);
             else
@@ -276,6 +276,30 @@ public class BallMgr : Singleton<BallMgr>
 
         // active ball
         Ball ball = lBalls[_id];
+
+        // swap component (only for special ball)
+        if (_type == Ball.Type.COLORFULL)
+        {
+            BallColorFull compBall = ball.gameObject.AddComponent<BallColorFull>();
+            compBall.Clone(ball);
+            Destroy(ball);
+
+            lBalls[_id] = compBall;
+            ball = compBall;
+        }
+        else
+        {
+            if (ball.GetType() == Ball.Type.COLORFULL)
+            {
+                Ball compBall = ball.gameObject.AddComponent<Ball>();
+                compBall.Clone(ball);
+                Destroy(ball);
+
+                lBalls[_id] = compBall;
+                ball = compBall;
+            }
+        }
+
         ball.SetType(_type);
         ball.SetActiveState(_state, true);
 

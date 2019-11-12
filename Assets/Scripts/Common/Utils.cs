@@ -41,7 +41,7 @@ public class Utils
 
         Path path = _qPath.Dequeue();
         List<Path> traversePath = path.DiscoverNextPos(_boardMap, _boardDimension);
-        
+
         for (int i = 0; i < traversePath.Count; i++)
         {
             path = traversePath[i];
@@ -76,7 +76,7 @@ public class Utils
             }
             Debug.Log(strDebug);
         }
-        
+
         return BreadthFirstSearch(_boardMap, ref _qPath, _boardDimension, _endPos);
     }
 
@@ -93,11 +93,45 @@ public class Utils
             // if match type
             Ball nextBall = _lBalls[nextId];
             Ball fstBall = _lBalls[_path[0]];
-            if (nextBall.GetState() == Ball.State.IDLE && nextBall.GetSize() == Ball.Size.BIG && nextBall.GetType() == fstBall.GetType())
+            if (nextBall.GetState() == Ball.State.IDLE && nextBall.GetSize() == Ball.Size.BIG)
             {
-                _path.Add(nextId);
-                // keep going find
-                FindPathMathColor(_lBalls, _boardDimension, _checkBalls, _dir, ref _path);
+                bool isKeepFinding = false;
+                if (nextBall.GetType() == fstBall.GetType())
+                {
+                    isKeepFinding = true;
+                }
+                else if (nextBall.GetType() == Ball.Type.COLORFULL)
+                {
+                    isKeepFinding = true;
+                }
+                else if (fstBall.GetType() == Ball.Type.COLORFULL)
+                {
+                    int colorFullCounter = 0;
+                    for (int i = 0; i < _path.Count; i++)
+                    {
+                        int id = _path[i];
+                        Ball.Type type = _lBalls[id].GetType();
+                        // get color of path (except color full ball)
+                        if (type != Ball.Type.COLORFULL && type == nextBall.GetType())
+                        {
+                            isKeepFinding = true;
+                            break;
+                        }
+                        // if all bals are colorfull
+                        if (type == Ball.Type.COLORFULL)
+                            colorFullCounter++;
+                    }
+
+                    if (!isKeepFinding && colorFullCounter == _path.Count)
+                        isKeepFinding = true;
+                }
+
+                if (isKeepFinding)
+                {
+                    _path.Add(nextId);
+                    // keep going find
+                    FindPathMathColor(_lBalls, _boardDimension, _checkBalls, _dir, ref _path);
+                }
             }
         }
     }

@@ -99,13 +99,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ca6a172916212245806b114b9517b21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ballImgPath: Image/{0}_ball
   transBall: {fileID: 4811295043562480}
   srBall: {fileID: 212235494960726572}
   animator: {fileID: 95829178563677952}
   mvmSpeed: 10
   tileId: 0
   state: 1
+  size: 0
   curStep: -1
   mvmVelocity: {x: 0, y: 0}
   oldMvmVelocity: {x: 0, y: 0}

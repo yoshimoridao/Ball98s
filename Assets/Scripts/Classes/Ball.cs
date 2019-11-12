@@ -6,7 +6,7 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     public static string ballImgPath = "Image/{0}_ball";
-    public enum Type { BLUE, BROWN, GREEN, CYAN, PINK, RED, GHOST };
+    public enum Type { BLUE, BROWN, GREEN, CYAN, PINK, RED, GHOST, COLORFULL, COUNT };
     public enum State { INVISIBLE, IDLE, GROWSMALL, GROWBIG, BOUNCE, MOVING };
     public enum Size { SMALL, BIG };
 
@@ -60,7 +60,7 @@ public class Ball : MonoBehaviour
     public void SetState(State _state) { state = _state; }
     public State GetState() { return state; }
 
-    public void SetActiveState(State _state, bool _isActive)
+    public virtual void SetActiveState(State _state, bool _isActive)
     {
         if (_isActive)
             SetState(_state);
@@ -107,7 +107,13 @@ public class Ball : MonoBehaviour
 
     public static Sprite GetSprite(Ball.Type _type)
     {
-        Sprite sprite = Resources.Load<Sprite>(ballImgPath.Replace("{0}", _type.ToString().ToLower()));
+        // default color for special type
+        if (_type == Type.COLORFULL)
+            _type = Type.BLUE;
+
+        string spriteKey = ballImgPath.Replace("{0}", _type.ToString().ToLower());
+        
+        Sprite sprite = Resources.Load<Sprite>(spriteKey);
         if (sprite)
             return sprite;
         else
@@ -115,21 +121,39 @@ public class Ball : MonoBehaviour
 
         return null;
     }
-    // ========================================================== UNITY FUNC ==========================================================
-    private void Start()
+
+    public void Clone(Ball _ball)
     {
-        animator = GetComponent<Animator>();
+        transBall = _ball.transBall;
+        srBall = _ball.srBall;
+        animator = _ball.animator;
+        mvmSpeed = _ball.mvmSpeed;
+        tileId = _ball.tileId;
+        type = _ball.type;
+        state = _ball.state;
+        size = _ball.size;
+        movingPath = _ball.movingPath;
+        curStep = _ball.curStep;
+        mvmVelocity = _ball.mvmVelocity;
+        oldMvmVelocity = _ball.oldMvmVelocity;
+}
+    // ========================================================== UNITY FUNC ==========================================================
+    public void Start()
+    {
+        if (!animator)
+            animator = GetComponent<Animator>();
+
         movingPath = null;
         // change color following type
         ChangeSprite();
     }
 
-    private void Update()
+    public void Update()
     {
         UpdateState();
     }
 
-    public void Init(int _tileId, Type _type, State _state = State.INVISIBLE)
+    public virtual void Init(int _tileId, Type _type, State _state = State.INVISIBLE)
     {
         tileId = _tileId;
         SetActiveState(_state, true);
