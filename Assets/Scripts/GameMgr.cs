@@ -13,6 +13,7 @@ public class GameMgr : Singleton<GameMgr>
 
     void Start ()
     {
+        PlayerInfo.Instance.Init();
         BoardMgr.Instance.Init();
         BallMgr.Instance.Init();
         TopPanelMgr.Instance.Init();

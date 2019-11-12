@@ -6,17 +6,16 @@ using UnityEngine.UI;
 public class TopPanelMgr : Singleton<TopPanelMgr>
 {
     public RectTransform rtBallPanel;
+    public RectTransform rtScoreZone;
+    public RectTransform rtHighScore;
     public Image ball1;
     public Image ball2;
     public Image ball3;
     public Text txtTimer;
-    private float timer;
+    public Text txtScore;
+    public Text txtHighScore;
 
-    // ========================================================== GET/ SET ==========================================================
-    public void SetPositionBallPanel(Vector3 _val)
-    {
-        rtBallPanel.position = _val;
-    }
+    private float timer;
 
     // ========================================================== UNITY FUNC ==========================================================
     private void Awake()
@@ -42,10 +41,32 @@ public class TopPanelMgr : Singleton<TopPanelMgr>
         timer = GameMgr.Instance.timeForRound;
     }
 
+    public void SetPositionBallPanel(Vector3 _val)
+    {
+        rtBallPanel.position = _val;
+    }
+    public void SetPositionScoreZone(Vector3 _val)
+    {
+        rtScoreZone.position = _val;
+    }
+    public void SetPositionHighScoreZone(Vector3 _val)
+    {
+        rtHighScore.position = _val;
+    }
+
     public void RefreshBallPanel(Sprite _sprite1, Sprite _sprite2, Sprite _sprite3)
     {
         ball1.sprite = _sprite1;
         ball2.sprite = _sprite2;
         ball3.sprite = _sprite3;
+    }
+
+    public void RefreshScorePanel(int _score)
+    {
+        txtScore.text = _score.ToString();
+    }
+    public void RefreshHighscorePanel(int _score)
+    {
+        txtHighScore.text = _score.ToString();
     }
 }

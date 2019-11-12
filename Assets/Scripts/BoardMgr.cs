@@ -87,6 +87,8 @@ public class BoardMgr : Singleton<BoardMgr>
         // set pos of Top Zone
         topPanelZone.transform.position = pos;
         TopPanelMgr.Instance.SetPositionBallPanel(Camera.main.WorldToScreenPoint(topPanelZone.transform.position));
+        TopPanelMgr.Instance.SetPositionScoreZone(Camera.main.WorldToScreenPoint(new Vector3(topPanelSr.bounds.min.x, topPanelSr.bounds.center.y, 0.0f)));
+        TopPanelMgr.Instance.SetPositionHighScoreZone(Camera.main.WorldToScreenPoint(new Vector3(topPanelSr.bounds.max.x, topPanelSr.bounds.center.y, 0.0f)));
 
         // generate tiles
         tileSize = rectBoardSize.width / (float)boardDimension;
