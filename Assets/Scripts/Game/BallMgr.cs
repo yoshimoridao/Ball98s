@@ -84,6 +84,10 @@ public class BallMgr : Singleton<BallMgr>
 
     public void OnTouchBall(int _tileId)
     {
+        // dont regconize touch when ball moving
+        if (movingBallId != -1)
+            return;
+
         Ball touchBall = lBalls[_tileId];
         // First touch (select ball)
         if (touchedBallId == -1 && _tileId < lBalls.Count)
@@ -260,7 +264,9 @@ public class BallMgr : Singleton<BallMgr>
         if (turn < GameConfig.ballSpawnPerTurn || lEmptyTiles.Count <= 0)
         {
             GameMgr.Instance.OnGameOver();
-            Debug.Log("GAME OVER");
+
+            if (DebugUtils.IsDebugEnable())
+                Debug.Log("GAME OVER");
         }
     }
 
@@ -271,8 +277,6 @@ public class BallMgr : Singleton<BallMgr>
 
         // active ball
         Ball ball = lBalls[_id];
-
-        _type = Ball.Type.BLUE;
 
         // swap component (only for special ball)
         if (_type == Ball.Type.COLORFULL)

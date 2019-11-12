@@ -267,7 +267,8 @@ public class Ball : MonoBehaviour
 
     public void OnExplode()
     {
-        Debug.Log("EXPLODE = " + GetTileId());
+        if (DebugUtils.IsDebugEnable())
+            Debug.Log("EXPLODE = " + GetTileId());
         // invisible
         SetActiveState(Ball.State.INVISIBLE, true);
     }
@@ -302,7 +303,9 @@ public class Ball : MonoBehaviour
     // ========================================================== DEBUG FUNC ==========================================================
     private void Debug_FindPathFunc()
     {
-        Debug.Log("=>>>>>>>>>>>>>>> Founding Path = ");
+        if (DebugUtils.IsDebugEnable())
+            Debug.Log("=>>>>>>>>>>>>>>> Founding Path = ");
+
         if (movingPath != null)
         {
             movingPath.ShowDebug();

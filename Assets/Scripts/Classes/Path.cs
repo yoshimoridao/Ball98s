@@ -102,6 +102,7 @@ public class Path
             BoardMgr.Instance.HighlightTile(DebugUtils.GetColorTrack(), pos);
         }
 
-        Debug.Log(strDebug);
+        if (DebugUtils.IsDebugEnable())
+            Debug.Log(strDebug);
     }
 }

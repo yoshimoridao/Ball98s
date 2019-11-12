@@ -6,12 +6,12 @@ public class GameConfig : MonoBehaviour
 {
     public static int timeForRound = 600;
 
-    public static int boardDimension = 4;
+    public static int boardDimension = 9;
     // scale ratio vs camera height
     public static float boardScale = 0.8f;
     public static float tileOffset = 0.1f;
 
-    public static int ballsGetPoint = 3;
+    public static int ballsGetPoint = 5;
     public static int ballSpawnPerTurn = 3;
     public static float ballScale = 0.8f;  // ball's scale (ratio vs tile's size)
 
