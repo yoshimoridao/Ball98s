@@ -48,7 +48,7 @@ public class TopPanelMgr : Singleton<TopPanelMgr>
     // ========================================================== PUBLIC FUNC ==========================================================
     public void Init()
     {
-        timer = GameMgr.Instance.timeForRound;
+        timer = GameConfig.timeForRound;
     }
 
     public void SetActive(bool _isActive)

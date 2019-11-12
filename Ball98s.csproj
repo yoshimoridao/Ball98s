@@ -83,11 +83,12 @@
     <Compile Include="Assets\Scripts\Classes\Ball\BallColorFull.cs" />
     <Compile Include="Assets\Scripts\Classes\Path.cs" />
     <Compile Include="Assets\Scripts\Classes\Tile.cs" />
-    <Compile Include="Assets\Scripts\Common\DebugUtils.cs" />
     <Compile Include="Assets\Scripts\Common\InputMgr.cs" />
     <Compile Include="Assets\Scripts\Common\Singleton.cs" />
     <Compile Include="Assets\Scripts\Common\Utils.cs" />
     <Compile Include="Assets\Scripts\Common\ZDepth.cs" />
+    <Compile Include="Assets\Scripts\Config\DebugUtils.cs" />
+    <Compile Include="Assets\Scripts\Config\GameConfig.cs" />
     <Compile Include="Assets\Scripts\Game\BallMgr.cs" />
     <Compile Include="Assets\Scripts\Game\BoardMgr.cs" />
     <Compile Include="Assets\Scripts\Game\GameMgr.cs" />

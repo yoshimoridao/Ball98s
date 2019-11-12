@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class DebugUtils
 {
-    private static bool isDebugEnable = false;
     private static Color curTrackColor = Color.red;
     private static float redDropPerStep = 1;
 
     public static bool IsDebugEnable()
     {
-        return isDebugEnable;
+        return GameConfig.isDebugEnable;
     }
 
     public static Color GetColorTrack()

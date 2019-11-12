@@ -7,11 +7,6 @@ public class BallMgr : Singleton<BallMgr>
     // prefab
     public GameObject prefBall;
 
-    // properties
-    public int ballsGetPoint = 3;
-    public int ballSpawnPerTurn = 3;
-    public float ballScale = 0.8f;  // ball's scale (ratio vs tile's size)
-
     private List<Ball> lBalls = new List<Ball>();           // list contains all of balls entity on board
     [SerializeField]
     private List<int> lEmptyTiles = new List<int>();        // list contains all of id of empty slots on board
@@ -43,8 +38,8 @@ public class BallMgr : Singleton<BallMgr>
         if (GameMgr.Instance.GetGameState() != GameMgr.GameState.PLAYING)
             return;
 
-        // spawn for first
-        if (lEmptyTiles.Count == lBalls.Count && lSmallBalls.Count == 0)
+        // spawn for first or empty ball full size
+        if ((lEmptyTiles.Count == lBalls.Count && lSmallBalls.Count == 0) || (lEmptyTiles.Count + lSmallBalls.Count == lBalls.Count))
         {
             // default spawn big size
             SpawnRandomBalls(Ball.State.GROWBIG);
@@ -73,7 +68,7 @@ public class BallMgr : Singleton<BallMgr>
             if (ballSize == 0)
             {
                 SpriteRenderer tileSr = tile.GetSpriteRenderer();
-                ballSize = tileSr.bounds.size.x * ballScale;
+                ballSize = tileSr.bounds.size.x * GameConfig.ballScale;
                 ballSize = Mathf.Min(ballSize / srBall.bounds.size.x, ballSize / srBall.bounds.size.y);
             }
             compBall.SetLocalScale(new Vector3(ballSize, ballSize, 1.0f));
@@ -216,14 +211,14 @@ public class BallMgr : Singleton<BallMgr>
     {
         // gen balls
         List<int> spawnIds = new List<int>();
-        int turn = Mathf.Min(ballSpawnPerTurn, lEmptyTiles.Count);
+        int turn = Mathf.Min(GameConfig.ballSpawnPerTurn, lEmptyTiles.Count);
         // Random Position (not match prev pos)
         for (int i = 0; i < turn; i++)
         {
             int rdId = -1;
             do
             {
-                rdId = (turn == ballSpawnPerTurn) ? Random.Range(0, lEmptyTiles.Count) : i;
+                rdId = (turn == GameConfig.ballSpawnPerTurn) ? Random.Range(0, lEmptyTiles.Count) : i;
             } while (rdId >= lEmptyTiles.Count || spawnIds.Contains(lEmptyTiles[rdId]));
 
             spawnIds.Add(lEmptyTiles[rdId]);
@@ -262,7 +257,7 @@ public class BallMgr : Singleton<BallMgr>
             TopPanelMgr.instance.RefreshBallPanel(Ball.GetSprite(lnextTypes[0]), Ball.GetSprite(lnextTypes[1]), Ball.GetSprite(lnextTypes[2]));
 
         // GAME OVER (out of slot of ball to spawn)
-        if (turn < ballSpawnPerTurn || lEmptyTiles.Count <= 0)
+        if (turn < GameConfig.ballSpawnPerTurn || lEmptyTiles.Count <= 0)
         {
             GameMgr.Instance.OnGameOver();
             Debug.Log("GAME OVER");
@@ -276,6 +271,8 @@ public class BallMgr : Singleton<BallMgr>
 
         // active ball
         Ball ball = lBalls[_id];
+
+        _type = Ball.Type.BLUE;
 
         // swap component (only for special ball)
         if (_type == Ball.Type.COLORFULL)
@@ -361,7 +358,7 @@ public class BallMgr : Singleton<BallMgr>
         }
 
         // Search all balls matching type
-        int boardDimension = BoardMgr.Instance.boardDimension;
+        int boardDimension = GameConfig.boardDimension;
         List<int> matchedBallIds = new List<int>();
         for (int i = 0; i < bigBalls.Count; i++)
         {
@@ -373,7 +370,7 @@ public class BallMgr : Singleton<BallMgr>
                 Utils.FindPathMathColor(new List<Ball>(lBalls), boardDimension, bigBalls, dir, ref path);
 
                 // add matched id 
-                if (path.Count >= ballsGetPoint && path.Contains(movingBallId))
+                if (path.Count >= GameConfig.ballsGetPoint && path.Contains(movingBallId))
                 {
                     //foreach (int id in path)
                     //    if (!matchedBallIds.Contains(id))

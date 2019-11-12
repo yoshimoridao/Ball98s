@@ -5,7 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class Ball : MonoBehaviour
 {
-    public static string ballImgPath = "Image/{0}_ball";
     public enum Type { BLUE, BROWN, GREEN, CYAN, PINK, RED, GHOST, COLORFULL, COUNT };
     public enum State { INVISIBLE, IDLE, GROWSMALL, GROWBIG, BOUNCE, MOVING };
     public enum Size { SMALL, BIG };
@@ -111,7 +110,7 @@ public class Ball : MonoBehaviour
         if (_type == Type.COLORFULL)
             _type = Type.BLUE;
 
-        string spriteKey = ballImgPath.Replace("{0}", _type.ToString().ToLower());
+        string spriteKey = GameConfig.ballImgPath.Replace("{0}", _type.ToString().ToLower());
         
         Sprite sprite = Resources.Load<Sprite>(spriteKey);
         if (sprite)
@@ -174,7 +173,7 @@ public class Ball : MonoBehaviour
     {
         // update velocity
         oldMvmVelocity = mvmVelocity;
-        int boardDimension = BoardMgr.Instance.boardDimension;
+        int boardDimension = GameConfig.boardDimension;
         List<Tile> lTiles = BoardMgr.Instance.GetListTiles();
         int curTileId = movingPath.GetNode(curStep);
 
@@ -243,7 +242,7 @@ public class Ball : MonoBehaviour
     // ========================================================== PUBLIC FUNC ==========================================================
     public bool FindPath(List<int> _boardMap, int _desTileId)
     {
-        movingPath = Utils.FindShortestPath(_boardMap, BoardMgr.Instance.boardDimension, tileId, _desTileId);
+        movingPath = Utils.FindShortestPath(_boardMap, GameConfig.boardDimension, tileId, _desTileId);
         if (movingPath != null)
             SetActiveState(State.MOVING, true);
 

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class SceneUIMgr : Singleton<SceneUIMgr>
 {
-    public string scenePrefabPath = "SceneUI/{0}";
     public enum Scene { NONE, GAMESTART, GAMEOVER };
 
     private Scene curScene = Scene.NONE;
@@ -33,7 +32,7 @@ public class SceneUIMgr : Singleton<SceneUIMgr>
     {
         TopPanelMgr.Instance.SetActive(false);
 
-        GameObject prefScene = Resources.Load<GameObject>(scenePrefabPath.Replace("{0}", _scene.ToString().ToLower()));
+        GameObject prefScene = Resources.Load<GameObject>(GameConfig.scenePrefabPath.Replace("{0}", _scene.ToString().ToLower()));
         if (prefScene)
         {
             curScene = _scene;

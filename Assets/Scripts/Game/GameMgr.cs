@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class GameMgr : Singleton<GameMgr>
 {
-    public int timeForRound = 600;
     public enum GameState { GAMESTART, PLAYING, PAUSE, GAMEOVER };
 
     private GameState gameState = GameState.GAMESTART;
