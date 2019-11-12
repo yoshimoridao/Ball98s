@@ -6,7 +6,7 @@ public class Utils
 {
     static int stepCount = 0;
 
-    public static Path FindShortestPath(List<int> _board, int _boardDimension, int _startPos, int _endPos)
+    public static Path FindShortestPath(List<int> _boardMap, int _boardDimension, int _startPos, int _endPos)
     {
         Queue<Path> qPath = new Queue<Path>();
         Path path = null;
@@ -21,15 +21,15 @@ public class Utils
         if (_startPos < Mathf.Pow(_boardDimension, 2))
         {
             qPath.Enqueue(new Path(_startPos));
-            path = BreadthFirstSearch(_board, ref qPath, _boardDimension, _endPos);
+            path = BreadthFirstSearch(_boardMap, ref qPath, _boardDimension, _endPos);
         }
 
         return path;
     }
 
-    private static Path BreadthFirstSearch(List<int> _board, ref Queue<Path> _qPath, int _boardDimension, int _endPos)
+    private static Path BreadthFirstSearch(List<int> _boardMap, ref Queue<Path> _qPath, int _boardDimension, int _endPos)
     {
-        if (_qPath.Count == 0 || _board.Count == 0)
+        if (_qPath.Count == 0 || _boardMap.Count == 0)
             return null;
 
         // debug
@@ -40,7 +40,7 @@ public class Utils
         }
 
         Path path = _qPath.Dequeue();
-        List<Path> traversePath = path.DiscoverNextPos(_board, _boardDimension);
+        List<Path> traversePath = path.DiscoverNextPos(_boardMap, _boardDimension);
         
         for (int i = 0; i < traversePath.Count; i++)
         {
@@ -54,9 +54,9 @@ public class Utils
             }
 
             // remove travesed index in board
-            int tmpId = _board.FindIndex(x => x == lastPosIndex);
+            int tmpId = _boardMap.FindIndex(x => x == lastPosIndex);
             if (tmpId != -1)
-                _board.RemoveAt(tmpId);
+                _boardMap.RemoveAt(tmpId);
 
             // store path for next search
             _qPath.Enqueue(path);
@@ -77,7 +77,7 @@ public class Utils
             Debug.Log(strDebug);
         }
         
-        return BreadthFirstSearch(_board, ref _qPath, _boardDimension, _endPos);
+        return BreadthFirstSearch(_boardMap, ref _qPath, _boardDimension, _endPos);
     }
 
     public static void FindPathMathColor(List<Ball> _lBalls, int _boardDimension, List<int> _checkBalls, int _dir, ref List<int> _path)

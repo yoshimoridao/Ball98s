@@ -100,18 +100,27 @@ public class BallMgr : Singleton<BallMgr>
             if (touchBall.GetState() == Ball.State.INVISIBLE || 
                 (touchBall.GetState() == Ball.State.IDLE && touchBall.GetSize() == Ball.Size.SMALL))
             {
-                // if ball has moving path (-> swap index of 2 ball in storage)
-                List<int> cloneListAvailNodes = new List<int>(lEmptyTiles);
-                cloneListAvailNodes.AddRange(lSmallBalls);
-                if (touchedBall.FindPath(cloneListAvailNodes, _tileId))
+                // set movement map
+                List<int> map = new List<int>();
+                if (touchedBall.GetType() == Ball.Type.GHOST)   // ghost ball (can move all map)
                 {
-                    OnMovingBall(touchedBall, _tileId);
+                    for (int i = 0; i < lBalls.Count; i++)
+                        map.Add(i);
                 }
-                // if ball's path stucked
+                // normal ball (map included Empty slot & slot contain small ball)
                 else
                 {
-                    touchedBall.SetActiveState(Ball.State.IDLE, true);
+                    map = new List<int>(lEmptyTiles);
+                    map.AddRange(lSmallBalls);
                 }
+                
+                // if ball has founded mvm path
+                if (touchedBall.FindPath(map, _tileId))
+                    OnMovingBall(touchedBall, _tileId);
+                // if ball's path stucked
+                else
+                    touchedBall.SetActiveState(Ball.State.IDLE, true);
+
                 touchedBallId = -1;
             }
             // touch same ball || another activated ball

@@ -209,9 +209,9 @@ public class Ball : MonoBehaviour
     }
 
     // ========================================================== PUBLIC FUNC ==========================================================
-    public bool FindPath(List<int> _lAvailSlots, int _desTileId)
+    public bool FindPath(List<int> _boardMap, int _desTileId)
     {
-        movingPath = Utils.FindShortestPath(_lAvailSlots, BoardMgr.Instance.boardDimension, tileId, _desTileId);
+        movingPath = Utils.FindShortestPath(_boardMap, BoardMgr.Instance.boardDimension, tileId, _desTileId);
         if (movingPath != null)
             SetActiveState(State.MOVING, true);
 
