@@ -9,11 +9,6 @@ public class PlayerInfo : Singleton<PlayerInfo>
 
     // ========================================================== GET/ SET ==========================================================
     public int GetHighScore() { return highScore; }
-    public void SetHighScore(int _pnt)
-    {
-        highScore = _pnt;
-        TopPanelMgr.Instance.RefreshScorePanel(highScore);
-    }
     public int GetScore() { return score; ; }
     public void SetScore(int _pnt)
     {
@@ -49,6 +44,12 @@ public class PlayerInfo : Singleton<PlayerInfo>
         highScore = 0;
 
         TopPanelMgr.Instance.RefreshScorePanel(score);
+        TopPanelMgr.Instance.RefreshHighscorePanel(highScore);
+    }
+
+    public void UpdateHighScore()
+    {
+        highScore = score;
         TopPanelMgr.Instance.RefreshHighscorePanel(highScore);
     }
 }

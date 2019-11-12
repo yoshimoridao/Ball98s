@@ -49,6 +49,8 @@ public class GameMgr : Singleton<GameMgr>
 
     public void OnGameOver()
     {
+        PlayerInfo.Instance.UpdateHighScore();
+
         SetGameState(GameState.GAMEOVER);
         SceneUIMgr.Instance.ShowScene(SceneUIMgr.Scene.GAMEOVER);
     }
