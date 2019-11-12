@@ -1,4 +1,4 @@
-* click to another idle ball
+* click to another idle ball	- done
 * moving ghost type
 - add ui (point - gameover - startgame)
 - save game

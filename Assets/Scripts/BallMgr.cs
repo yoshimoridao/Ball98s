@@ -17,12 +17,12 @@ public class BallMgr : Singleton<BallMgr>
     private List<int> lEmptyTiles = new List<int>();        // list contains all of id of empty slots on board
     [SerializeField]
     private List<int> lSmallBalls = new List<int>();        // list contains balls scal full size next turn
-    private int smallBallOverlayed = -1;
-    [SerializeField]
-    private int movingBallId = -1;
+    private List<Ball.Type> lnextTypes = new List<Ball.Type>();     // list contains type for next spawned balls
+
     private float ballSize;
     private int touchedBallId = -1;
-    private List<Ball.Type> lnextTypes = new List<Ball.Type>();
+    private int movingBallId = -1;
+    private int smallBallOverlayed = -1;
 
     // ========================================================== GET/ SET ==========================================================
     public float GetBallSize() { return ballSize; }
@@ -112,14 +112,23 @@ public class BallMgr : Singleton<BallMgr>
                 {
                     touchedBall.SetActiveState(Ball.State.IDLE, true);
                 }
+                touchedBallId = -1;
             }
             // touch same ball || another activated ball
             else if (_tileId == touchedBallId || touchBall.GetState() != Ball.State.INVISIBLE)
             {
+                // store touched ball's id
+                if (touchBall.GetState() == Ball.State.IDLE && touchBall.GetSize() == Ball.Size.BIG)
+                {
+                    touchedBallId = _tileId;
+                    touchBall.SetActiveState(Ball.State.BOUNCE, true);
+                }
+                else
+                {
+                    touchedBallId = -1;
+                }
                 touchedBall.SetActiveState(Ball.State.IDLE, true);
             }
-
-            touchedBallId = -1;
         }
     }
 
@@ -244,7 +253,7 @@ public class BallMgr : Singleton<BallMgr>
         UpdateListEmptyTiles(false, _id);
 
         // DEBUG
-        //if (DebugUtils.IsDebugEnable())
+        if (DebugUtils.IsDebugEnable())
             Debug.Log("SPAWN BALL = " + _id);
     }
 
@@ -325,6 +334,9 @@ public class BallMgr : Singleton<BallMgr>
                 UpdateListEmptyTiles(true, ball.GetTileId());   // add empty slot
             }
         }
+
+        // Update score
+        PlayerInfo.Instance.AddScore(matchedBallIds.Count);
     }
 
     // ==========

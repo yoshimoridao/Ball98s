@@ -9,33 +9,38 @@ public class PlayerInfo : Singleton<PlayerInfo>
 
     // ========================================================== GET/ SET ==========================================================
     public int GetHighScore() { return highScore; }
-    public void SetHighScore(int _pnt) { highScore = _pnt; }
+    public void SetHighScore(int _pnt)
+    {
+        highScore = _pnt;
+        TopPanelMgr.Instance.RefreshScorePanel(highScore);
+    }
     public int GetScore() { return score; ; }
     public void SetScore(int _pnt)
     {
         score = _pnt;
+        TopPanelMgr.Instance.RefreshScorePanel(score);
     }
     public void AddScore(int _plusPnt)
     {
         score += _plusPnt;
+        TopPanelMgr.Instance.RefreshScorePanel(score);
     }
 
     // ========================================================== UNITY FUNC ==========================================================
     private void Awake()
     {
         instance = this;
-        Debug.Log(instance);
     }
 
-    void Start ()
+    void Start()
     {
-		
-	}
-	
-	void Update ()
+
+    }
+
+    void Update()
     {
-		
-	}
+
+    }
 
     // ========================================================== PUBLIC FUNC ==========================================================
     public void Init()
@@ -44,6 +49,6 @@ public class PlayerInfo : Singleton<PlayerInfo>
         highScore = 0;
 
         TopPanelMgr.Instance.RefreshScorePanel(score);
-        TopPanelMgr.Instance.RefreshScorePanel(highScore);
+        TopPanelMgr.Instance.RefreshHighscorePanel(highScore);
     }
 }
